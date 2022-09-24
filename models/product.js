@@ -33,6 +33,7 @@ module.exports = class Product {
     var filtered = products.filter((ele) => {
       return ele != this;
     });
+    fs.delete()
     products = filtered;
   }
   static fetchAll(cb) {

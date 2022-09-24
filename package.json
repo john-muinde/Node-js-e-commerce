@@ -15,10 +15,19 @@
     "body-parser": "^1.20.0",
     "ejs": "^3.0.2",
     "express": "^4.17.3",
-    "express-handlebars": "3.0",
+    "express-handlebars": "^6.0.6",
+    "nodemon": "^2.0.19",
     "pug": "^3.0.2"
   },
   "devDependencies": {
     "@types/express-handlebars": "^6.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Atrocious-jpg/Node-js-e-commerce.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Atrocious-jpg/Node-js-e-commerce/issues"
+  },
+  "homepage": "https://github.com/Atrocious-jpg/Node-js-e-commerce#readme"
 }
