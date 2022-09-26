@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const dirName = require("../util/path");
 const p = path.join(dirName, "data", "cart.json");
+const Product = require("../models/product");
 
 module.exports = class Cart {
   static addProduct(id, productPrice) {
@@ -32,6 +33,24 @@ module.exports = class Cart {
       cart.totalPrice += +productPrice;
       fs.writeFile(p, JSON.stringify(cart), (err) => {
         console.log(err);
+      });
+    });
+  }
+  static fetchAll(cb) {
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {
+        return cb([]);
+      }
+      const allProducts = JSON.parse(fileContent).products;
+      const finalProducts = [];
+      let count = 0;
+      allProducts.map((element) => {
+        Product.findById(element.id, (product) => {
+          finalProducts.push({...product,element});
+          if (finalProducts.length == allProducts.length) {
+            cb(finalProducts);
+          }
+        });
       });
     });
   }
