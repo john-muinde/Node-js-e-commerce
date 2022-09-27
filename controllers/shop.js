@@ -36,14 +36,23 @@ exports.getProduct = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   Cart.fetchAll((products) => {
-    // console.log(products)
+    
     res.render("shop/cart", {
       path: "/cart",
       docTitle: "My Cart",
       firstText: "My Cart",
       prods: products,
     });
+    console.log(products)
   });
+};
+
+exports.postDeleteProduct = (req,res,next) => {
+  const prodId = req.body.productId;
+  Product.findById(prodId, (product) => {
+    Cart.deleteProduct(prodId, product.price);
+  });
+  res.redirect("/cart");
 };
 
 exports.postCart = (req, res, next) => {

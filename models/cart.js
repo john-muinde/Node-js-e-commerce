@@ -42,15 +42,46 @@ module.exports = class Cart {
         return cb([]);
       }
       const allProducts = JSON.parse(fileContent).products;
-      const finalProducts = [];
-      let count = 0;
-      allProducts.map((element) => {
-        Product.findById(element.id, (product) => {
-          finalProducts.push({...product,element});
-          if (finalProducts.length == allProducts.length) {
-            cb(finalProducts);
-          }
+      if (allProducts.length >= 1) {
+        const finalProducts = [];
+        allProducts.map((element) => {
+          Product.findById(element.id, (product) => {
+            finalProducts.push({ ...product, element });
+            if (finalProducts.length == allProducts.length) {
+              cb(finalProducts);
+            }
+          });
         });
+      } else {
+        return cb([]);
+      }
+    });
+  }
+
+  static deleteProduct(id, productPrice) {
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {
+        console.log("Cart error reading from Cart: " + err);
+        return;
+      }
+      const cart = JSON.parse(fileContent);
+      const updatedCart = { ...cart };
+      console.log(updatedCart);
+      let product = updatedCart.products.find((prod) => {
+        return prod.id === id;
+      });
+
+      // getProductsFromFile((products) => {
+      //   const product = products.find((p) => p.id === id);
+      //   cb(product);
+      // });
+      const productQty = product.qty;
+      updatedCart.products = updatedCart.products.filter(
+        (prod) => prod.id !== id
+      );
+      updatedCart.totalPrice -= productPrice * productQty;
+      fs.writeFile(p, JSON.stringify(updatedCart), (err) => {
+        console.log("Deleting product from Cart: " + err);
       });
     });
   }
