@@ -2,7 +2,23 @@ const fs = require("fs");
 const path = require("path");
 const dirName = require("../util/path");
 const p = path.join(dirName, "data", "cart.json");
-const Product = require("../models/product");
+const productsPath = path.join(dirName, "data", "products.json");
+
+const getProductsFile = (cb) => {
+  fs.readFile(productsPath, (err, fileContent) => {
+    if (err) {
+      return cb([]);
+    }
+    cb(JSON.parse(fileContent));
+  });
+};
+
+const getSpecificProduct = (id, cb) => {
+  getProductsFile((products) => {
+    const product = products.find((p) => p.id === id);
+    cb(product);
+  });
+};
 
 module.exports = class Cart {
   static addProduct(id, productPrice) {
@@ -45,7 +61,7 @@ module.exports = class Cart {
       if (allProducts.length >= 1) {
         const finalProducts = [];
         allProducts.map((element) => {
-          Product.findById(element.id, (product) => {
+          getSpecificProduct(element.id, (product) => {
             finalProducts.push({ ...product, element });
             if (finalProducts.length == allProducts.length) {
               cb(finalProducts);
@@ -66,7 +82,7 @@ module.exports = class Cart {
       }
       const cart = JSON.parse(fileContent);
       const updatedCart = { ...cart };
-      console.log(updatedCart);
+      // console.log(updatedCart);
       let product = updatedCart.products.find((prod) => {
         return prod.id === id;
       });
@@ -79,7 +95,10 @@ module.exports = class Cart {
       updatedCart.products = updatedCart.products.filter(
         (prod) => prod.id !== id
       );
-      updatedCart.totalPrice = +(updatedCart.totalPrice - (productPrice * productQty)).toFixed(2);
+      updatedCart.totalPrice = +(
+        updatedCart.totalPrice -
+        productPrice * productQty
+      ).toFixed(2);
       fs.writeFile(p, JSON.stringify(updatedCart), (err) => {
         console.log("Deleting product from Cart: " + err);
       });
