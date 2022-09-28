@@ -79,7 +79,7 @@ module.exports = class Cart {
       updatedCart.products = updatedCart.products.filter(
         (prod) => prod.id !== id
       );
-      updatedCart.totalPrice -= productPrice * productQty;
+      updatedCart.totalPrice = +(updatedCart.totalPrice - (productPrice * productQty)).toFixed(2);
       fs.writeFile(p, JSON.stringify(updatedCart), (err) => {
         console.log("Deleting product from Cart: " + err);
       });
