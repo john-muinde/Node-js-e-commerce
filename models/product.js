@@ -56,7 +56,11 @@ module.exports = class Product {
       updatedProducts = updatedProducts.filter((prod) => prod.id !== id);
       fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
         if (!err) {
-          Cart.deleteProduct(id, product.price);
+          Cart.getSpecificProduct(id, (product) => {
+            if (product) {
+              Cart.deleteProduct(id, product.price);
+            }
+          });
         }
       });
     });

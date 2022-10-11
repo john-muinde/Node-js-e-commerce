@@ -34,20 +34,45 @@ exports.getProduct = (req, res, next) => {
   });
 };
 
+// exports.getCart2 = (req, res, next) => {
+//   Cart.fetchAll((products) => {
+//     res.render("shop/cart", {
+//       path: "/cart",
+//       docTitle: "My Cart",
+//       firstText: "My Cart",
+//       prods: products,
+//     });
+//     console.log(products);
+//   });
+// };
+
 exports.getCart = (req, res, next) => {
-  Cart.fetchAll((products) => {
-    
-    res.render("shop/cart", {
-      path: "/cart",
-      docTitle: "My Cart",
-      firstText: "My Cart",
-      prods: products,
+  Cart.getCart((cart) => {
+    console.log("here is the cart: ")
+    console.log(cart)
+    Product.fetchAll((products) => {
+      const cartProducts = [];
+      for (let product of products) {
+        const cartProductData = cart.products.find(
+          (prod) => prod.id === product.id
+        );
+        if (cartProductData) {
+          cartProducts.push({ productData: product, qty: cartProductData.qty });
+        }
+      }
+      res.render("shop/cart", {
+        path: "/cart",
+        docTitle: "My Cart",
+        firstText: "My Cart",
+        prods: cartProducts,
+        qty: cartProducts.qty
+      });
+      console.log(cartProducts);
     });
-    console.log(products)
   });
 };
 
-exports.postDeleteProduct = (req,res,next) => {
+exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId, (product) => {
     Cart.deleteProduct(prodId, product.price);

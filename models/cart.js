@@ -74,6 +74,22 @@ module.exports = class Cart {
     });
   }
 
+  static getCart = (cb) => {
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {
+        return cb([]);
+      }
+      cb(JSON.parse(fileContent));
+    });
+  };
+
+  static getSpecificProduct = (id, cb) => {
+    getProductsFile((products) => {
+      const product = products.find((p) => p.id === id);
+      cb(product);
+    });
+  };
+
   static deleteProduct(id, productPrice) {
     fs.readFile(p, (err, fileContent) => {
       if (err) {
@@ -86,11 +102,8 @@ module.exports = class Cart {
       let product = updatedCart.products.find((prod) => {
         return prod.id === id;
       });
+      // console.log(updatedCart);
 
-      // getProductsFromFile((products) => {
-      //   const product = products.find((p) => p.id === id);
-      //   cb(product);
-      // });
       const productQty = product.qty;
       updatedCart.products = updatedCart.products.filter(
         (prod) => prod.id !== id
